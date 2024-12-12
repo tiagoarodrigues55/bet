@@ -5,8 +5,16 @@ export default async function handler(req, res) {
         try {
             const { data, error } = await supabase
                 .from('offers')
-                .select('*');
-
+                .select(`
+                    *,
+                    offer_options (
+                        id,
+                        name,
+                        description,
+                        odds,
+                        status
+                    )
+                `);
             if (error) throw error;
 
             res.status(200).json(data);
