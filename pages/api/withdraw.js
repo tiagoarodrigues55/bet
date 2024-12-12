@@ -1,30 +1,22 @@
 import { supabase } from '@/utils/supabase';
+import { verifyOrCreateUser } from '@/utils/verifyOrCreateUser';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const { user_id, amount } = req.body;
+        const { phone_number, amount } = req.query;
 
         try {
-            const { data: wallet, error: fetchError } = await supabase
-                .from('Wallet')
-                .select('balance')
-                .eq('user_id', user_id)
-                .single();
+            // Obtém o user_id usando a função utilitária
+            const user_id = await verifyOrCreateUser(phone_number);
 
-            if (fetchError) throw fetchError;
+            // Busca os dados da carteira do usuário
+            const { data, error } = await supabase
+                .from('wallet')
+                .insert([{ user_id, amount }]);
 
-            if (wallet.balance < amount) {
-                return res.status(400).json({ message: 'Insufficient funds' });
-            }
+            if (error) throw error;
 
-            const { error: updateError } = await supabase
-                .from('Wallet')
-                .update({ balance: wallet.balance - amount })
-                .eq('user_id', user_id);
-
-            if (updateError) throw updateError;
-
-            res.status(200).json({ message: 'Withdrawal successful' });
+            res.status(200).json(data);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

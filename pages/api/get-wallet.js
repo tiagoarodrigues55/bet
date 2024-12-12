@@ -11,9 +11,9 @@ export default async function handler(req, res) {
 
             // Busca os dados da carteira do usuário
             const { data, error } = await supabase
-                .from('Wallet')
-                .select('id, balance, type')
-                .eq('user_id', user_id);
+                .from('wallet')
+                .select('*')
+                .eq('user_id', user_id)
 
             if (error) throw error;
 

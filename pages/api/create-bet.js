@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
             // Insere a aposta
             const { data, error } = await supabase
-                .from('Bets')
+                .from('bets')
                 .insert([{ user_id, option_id, amount, status }]);
 
             if (error) throw error;

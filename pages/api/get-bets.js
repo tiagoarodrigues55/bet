@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
             // Busca as apostas do usuário
             const { data, error } = await supabase
-                .from('Bets')
+                .from('bets')
                 .select('id, user_id, option_id, amount, status')
                 .eq('user_id', user_id);
 
